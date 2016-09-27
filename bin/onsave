@@ -1,0 +1,14 @@
+#!/bin/bash -i
+
+if [ -d '.git' ]
+then
+  echo Refreshing ctags...
+  #ctags -R .
+fi
+
+#onsave_pid=$(pidof -x onsave)
+if [ ! -z looper_pid ]
+then
+  echo Running $ITERATIVE_CMD
+  eval $ITERATIVE_CMD
+fi

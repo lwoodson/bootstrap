@@ -1,0 +1,103 @@
+" This is to force using system ruby when loading the ruby
+" filetype plugin.  Loading it with jruby is dog slow.  The
+" system ruby is 1.9.3, so if there are issues w/other ruby
+" versions, I should re-examine this fix
+let g:ruby_path='/usr/bin/ruby'
+
+" Colors
+syntax on
+set number
+color jellybeans
+set t_Co=256
+
+" Tabs
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set autoindent
+set nowrap
+
+" Better tab matching for paths
+:set wildmode=full
+
+highlight Fixit ctermbg=darkred guibg=darkred
+match Fixit /\%81v.\+/
+2match Fixit /\s\+$/
+
+set guifont=Monaco:h13
+set hlsearch
+set showmatch
+set mouse=a
+
+"Execute command silently then redraw the buffer.
+command! -nargs=1 Silently
+\ | execute ':silent !'.<q-args>
+\ | execute ':redraw!'
+
+"let mapleader = "\<Tab>"
+let mapleader = "\<Space>"
+
+" No swp files and such, we're editing files checked in to svn.
+set nobackup
+set nowb
+set noswapfile
+filetype plugin indent on
+
+" vim-plug
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-fugitive'
+Plug 'elzr/vim-json'
+Plug 'Raimondi/delimitMate'
+Plug 'scrooloose/syntastic'
+Plug 'scrooloose/nerdtree'
+Plug 'majutsushi/tagbar'
+Plug 'ctrlpvim/ctrlp.vim'
+
+call plug#end()
+
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_open=1
+let g:syntastic_check_on_wq=0
+
+autocmd BufNewFile,BufRead *.json set ft=javascript
+
+"TDD support commands
+command! -nargs=0 MarkFileToTest
+\ | execute "silent !tmux send-keys -t dev:test.1 'export FILE_TO_TEST=%:p' Enter"
+\ | execute ':redraw!'
+
+command! -nargs=0 IterateCommand
+\ | execute 'wa'
+\ | execute 'silent !tmux send-keys -t dev:work.1 "!!" Enter'
+\ | execute ':redraw!'
+
+" High use keys
+"map <F1> :call system('tmux send-keys -t dev:work.1 "!!" Enter')<CR>
+map <F2> :NERDTree<CR>
+map <F3> :Explore<CR>
+nmap <F4> :CtrlP<CR>
+nmap <F9> :exec '!ack -ri ' . @0<CR>
+nmap <F10> :TagbarToggle<CR>
+nmap <F11> :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+nmap <F12> :help myprefs<CR>
+
+map <Leader>v :Vexplore<CR>
+map <Leader>h :Hexplore<CR>
+nmap <Leader>] <C-]>
+nmap <Leader>[ <C-T>
+imap <Leader><Tab> <C-X><C-U>
+
+" Buffer nav
+map <C-k> <C-W><Up>
+map <C-j> <C-W><Down>
+map <C-h> <C-W><Left>
+map <C-l> <C-W><Right>
+map <Leader>l :b#<CR>
+map <Leader>. :bnext<CR>
+map <Leader>, :bprevious<CR>
+
+" Execute last command in work pane 2
+map <Leader>t :call system('tmux send-keys -t dev:work.1 "!!" Enter')<CR>
+autocmd BufWritePost * call system('tmux send-keys -t dev:work.1 "onsave" Enter')

@@ -1,0 +1,11 @@
+#!/bin/bash
+echo 'building...'
+tmux new-session -d -s dev -n work
+tmux split-window -t dev:work -h -p 35
+tmux new-window -t dev -n console
+tmux send-keys -t dev:work.0 'vim' Enter
+tmux select-window -t dev:work
+tmux select-pane -t 0
+sleep 1
+echo 'attaching...'
+TERM=xterm-256color tmux attach-session -t dev
