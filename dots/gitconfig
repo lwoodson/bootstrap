@@ -1,0 +1,33 @@
+[core]
+        autocrlf = input
+        safecrlf = true
+        editor = vim
+[user]
+        name = <USER>
+        email = <EMAIL>
+[diff]
+        tool = vimdiff
+[merge]
+        conflictstyle = diff3
+        tool = vimdiff
+[difftool]
+        prompt = false
+[merge "tool"]
+        prompt = false
+[push]
+        default = matching
+[color]
+        ui = auto
+[color "branch"]
+        current = yellow reverse
+        local = yellow
+        remote = green
+[color "diff"]
+        meta = yellow bold
+        frag = magenta bold
+        old = red bold
+        new = green bold
+[color "status"]
+        added = yellow
+        changed = green
+        untracked = cyan

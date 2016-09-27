@@ -16,7 +16,7 @@ install_packages() {
     yum groupinstall -y "Development Tools"
     yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop traceroute \
                    tmux vim ctags git docker libyaml-devel readline-devel zlib-devel \
-                   libffi-devel openssl-devel sqlite-devel ack
+                   libffi-devel openssl-devel sqlite-devel ack jq sysstat
     echo Done.
 }
 
@@ -34,6 +34,7 @@ setup_user() {
     	chage -d 0 ${user}
     fi
     usermod -aG wheel ${user}
+    mkdir -p ${homedir}/src
     echo Done.
 }
 
@@ -41,10 +42,10 @@ setup_ssh() {
     echo Setting up SSH...
     mkdir -p ${homedir}/.ssh
     chmod 700 ${homedir}/.ssh
-    ssh-keygen -N "" -t rsa -b 4096 -f ${user} -C "${email}"
-    mv ${user}* ${homedir}/.ssh/
-    chmod 644 ${homedir}/.ssh/lwoodson.pub
-    chmod 600 ${homedir}/.ssh/lwoodson
+    ssh-keygen -N "" -t rsa -b 4096 -f id_rsa -C "${email}"
+    mv id_rsa* ${homedir}/.ssh/
+    chmod 644 ${homedir}/.ssh/id_rsa.pub
+    chmod 600 ${homedir}/.ssh/id_rsa
     chown -R ${user}:${user} ${homedir}/.ssh
     echo Done.
 }
@@ -56,6 +57,9 @@ setup_dotfiles() {
     cp dots/profile ${homedir}/.profile
     cp dots/tmux.conf ${homedir}/.tmux.conf
     cp dots/vimrc ${homedir}/.vimrc
+    cp dots/gitconfig ${homedir}/.gitconfig
+    sed -i "s/<USER>/${user}/" ${homedir}/.gitconfig
+    sed -i "s/<EMAIL>/${email}/" ${homedir}/.gitconfig
     touch ${homedir}/.local_bashrc
     touch ${homedir}/.local_profile
     echo Done.
@@ -85,7 +89,7 @@ install_python() {
 install_java() {
     echo Installing Java
     yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel java-1.8.0-openjdk \
-                   java-1.8.0-openjdk-devel
+                   java-1.8.0-openjdk-devel maven
     echo Done.
 }
 
@@ -110,6 +114,7 @@ install_dev_utilities() {
 send_details_email() {
     echo Sending details email...
     sendmail ${email} <<-EOM
+From: root@${hostname}
 To: ${email}
 Subject: New Computer Setup!
 
