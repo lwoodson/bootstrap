@@ -175,7 +175,7 @@ enabled=1
 gpgcheck=1
 gpgkey=https://yum.dockerproject.org/gpg
 EOF
-    yum install docker-engine
+    yum -y install docker-engine
     systemctl start docker
     echo Done.
 }
@@ -193,6 +193,16 @@ install_dev_utilities() {
     GOPATH=/usr/local/lib/go make install
     cd "${workdir}"
     echo Done.
+}
+
+install_keys_from_github() {
+    echo "Installing ${user}'s keys from GitHub..."
+    authorized_keys="${homedir}/.ssh/authorized_keys"
+    url="https://api.github.com/users/${user}/keys"
+    curl "${url}" | jq '.[] | .key' | sed 's/"//g' >> "${authorized_keys}"
+    chown "${user}":"${user}" "${authorized_keys}"
+    chmod 600 "${authorized_keys}"
+    echo "Done."
 }
 
 send_details_email() {
@@ -226,4 +236,5 @@ setup_go_dev
 setup_web_dev
 setup_docker
 install_dev_utilities
+install_keys_from_github
 send_details_email
