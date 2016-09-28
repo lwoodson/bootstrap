@@ -15,16 +15,18 @@ install_packages() {
     yum update
     yum install -y epel-release
     yum groupinstall -y "Development Tools"
-    yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop traceroute \
-                   tmux vim ctags git docker libyaml-devel readline-devel zlib-devel \
-                   libffi-devel openssl-devel sqlite-devel ack jq sysstat unzip \
-                   bash-completion
+    yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop \
+                   traceroute tmux vim ctags git libyaml-devel readline-devel \
+                   zlib-devel libffi-devel openssl-devel sqlite-devel ack jq \
+                   sysstat unzip bash-completion yum-cron
     echo Done.
 }
 
 setup_host() {
     echo Setting up host...
     sed -i 's/^%wheel.*/%wheel  ALL=(ALL)   NOPASSWD: ALL/' /etc/sudoers
+    sed -i 's/^.*apply_updates.*=.*no$//' /etc/yum/yum-cron.conf
+    echo "apply_updates = yes" > /etc/yum/yum-cron.conf
     echo Done.
 }
 
@@ -37,6 +39,7 @@ setup_user() {
     fi
     usermod -aG wheel "${user}"
     mkdir -p "${homedir}/src"
+    cp lockdown.sh "${homedir}"/lockdown.sh
     echo Done.
 }
 
@@ -162,6 +165,21 @@ setup_cloud_tools() {
     echo Done.
 }
 
+setup_docker() {
+    echo Installing Docker...
+    tee /etc/yum.repos.d/docker.repo <<-'EOF'
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+    yum install docker-engine
+    systemctl start docker
+    echo Done.
+}
+
 install_dev_utilities() {
     echo Installing Dev Utilities...
     cp -R bin "${homedir}/bin"
@@ -194,12 +212,6 @@ EOM
     echo Done.
 }
 
-start_services() {
-    echo Starting services...
-    service docker restart
-    echo Done.
-}
-
 install_packages
 setup_host
 setup_user
@@ -212,5 +224,6 @@ setup_ruby_dev
 setup_javascript_dev
 setup_go_dev
 setup_web_dev
+setup_docker
 install_dev_utilities
 send_details_email
