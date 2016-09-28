@@ -8,6 +8,7 @@ homedir=/home/${1}
 hostname=$(hostname)
 ip=$(ifconfig | grep eth0 -A 1| grep inet | awk '{print $2}')
 password=$(openssl rand -base64 32)
+workdir=$(pwd)
 
 install_packages() {
     echo Installing packages...
@@ -89,7 +90,7 @@ setup_java_dev() {
     mv checkstyle-7.1.1-all.jar /lib/checkstyle/checkstyle-7.1.1-all.jar
     mkdir -p /etc/checkstyle
     mv *_checks.xml /etc/checkstyle
-    cd
+    cd "${workdir}"
     echo Done.
 }
 
@@ -124,26 +125,26 @@ setup_go_dev() {
     echo Setting up for Go development
     cd /usr/local/src
     wget https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz
-    tar -C /usr/local/go1.7.1 -xzf go1.7.1.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.7.1.linux-amd64.tar.gz
     ln -s /usr/local/go1.7.1 /usr/local/go
     ln -s /usr/local/go/bin/go /usr/local/bin/go
     ln -s /usr/local/go/bin/godoc /usr/local/bin/godoc
     ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
     mkdir -p /usr/local/lib/go
     echo "export GOPATH=/usr/local/lib/go" > /etc/profile.d/go.sh
-    rm /usr/local/src/go1.7.1
-    cd
+    rm /usr/local/src/go1.7.1.linux-amd64.tar.gz
+    cd "${workdir}"
     echo Done.
 }
 
 setup_web_dev() {
     echo Setting up for web development
-    cd /user/local/src
+    cd /usr/local/src
     wget http://binaries.html-tidy.org/binaries/tidy-5.2.0/tidy-5.2.0-64bit.rpm
     yum install -y tidy-5.2.0-64bit.rpm
     gem install sass
     rm tidy-5.2.0-64bit.rpm
-    cd
+    cd "${workdir}"
     echo Done.
 }
 
@@ -155,9 +156,10 @@ install_dev_utilities() {
 
     wget https://github.com/alecthomas/devtodo2/archive/master.zip
     unzip master.zip
-    cd devtodo-master
+    cd devtodo2-master
     GOPATH=/usr/local/lib/go go get gopkg.in/alecthomas/kingpin.v2
     GOPATH=/usr/local/lib/go go get make install
+    cd "${workdir}"
     echo Done.
 }
 
