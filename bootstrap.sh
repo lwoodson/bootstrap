@@ -78,28 +78,36 @@ setup_vim() {
     echo Done.
 }
 
-install_python() {
-    echo Installing Python
-    yum install -y python python-setuptools python-pip
-    pip install --upgrade pip
-    pip install httpie virtualenv
-    echo Done.
-}
-
-install_java() {
-    echo Installing Java
+setup_java_dev() {
+    echo Setting up for Java development
     yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel java-1.8.0-openjdk \
                    java-1.8.0-openjdk-devel maven
     echo Done.
 }
 
-install_ruby() {
-    echo Installing Ruby
+setup_python_dev() {
+    echo Setting up for Python development
+    yum install -y python python-setuptools python-pip
+    pip install --upgrade pip
+    pip install pep8 virtualenv httpie
+    echo Done.
+}
+
+setup_ruby_dev() {
+    echo Setting up for Ruby development
     su -c "gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3" -l "${user}"
     su -c "curl -sSL https://get.rvm.io | bash -s stable" -l "${user}"
     su -c "${HOME}/.rvm/bin/rvm install ruby" -l "${user}"
     su -c "${HOME}/.rvm/bin/rvm install jruby" -l "${user}"
     su -c "${HOME}/.rvm/bin/rvm alias create default ruby" -l "${user}"
+    echo Done.
+}
+
+setup_javascript_dev() {
+    echo Setting for Javascript development
+    curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
+    yum -y install nodejs
+    npm i -g eslint
     echo Done.
 }
 
@@ -140,8 +148,9 @@ setup_user
 setup_ssh
 setup_dotfiles
 setup_vim
-install_java
-install_python
-install_ruby
+setup_java_dev
+setup_python_dev
+setup_ruby_dev
+setup_javascript_dev
 install_dev_utilities
 send_details_email
