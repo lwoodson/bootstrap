@@ -12,7 +12,7 @@ workdir=$(pwd)
 
 install_packages() {
     echo Installing packages...
-    yum update
+    yum -y update
     yum install -y epel-release
     yum groupinstall -y "Development Tools"
     yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop \
