@@ -101,3 +101,7 @@ map <Leader>, :bprevious<CR>
 " Execute last command in work pane 2
 map <Leader>t :call system('tmux send-keys -t dev:work.1 "!!" Enter')<CR>
 autocmd BufWritePost * call system('tmux send-keys -t dev:work.1 "onsave" Enter')
+
+" Java dev
+g:syntastic_java_checkstyle_classpath='/lib/java/checkstyle.java'
+g:syntastic_java_checkstyle_conf_file='/google_checks.xml'

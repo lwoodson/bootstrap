@@ -82,6 +82,9 @@ setup_java_dev() {
     echo Setting up for Java development
     yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel java-1.8.0-openjdk \
                    java-1.8.0-openjdk-devel maven
+    wget http://downloads.sourceforge.net/project/checkstyle/checkstyle/7.1.1/checkstyle-7.1.1-all.jar
+    mkdir -p /lib/java
+    mv checkstyle-7.1.1-all.jar /lib/jvm-commmon/checkstyle-7.1.1-all.jar
     echo Done.
 }
 
@@ -107,7 +110,7 @@ setup_javascript_dev() {
     echo Setting for Javascript development
     curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
     yum -y install nodejs
-    npm i -g eslint
+    npm i -g eslint jsonlint
     echo Done.
 }
 
