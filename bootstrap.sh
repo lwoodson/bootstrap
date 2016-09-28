@@ -83,8 +83,11 @@ setup_java_dev() {
     yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel java-1.8.0-openjdk \
                    java-1.8.0-openjdk-devel maven
     wget http://downloads.sourceforge.net/project/checkstyle/checkstyle/7.1.1/checkstyle-7.1.1-all.jar
-    mkdir -p /lib/java
-    mv checkstyle-7.1.1-all.jar /lib/jvm-commmon/checkstyle-7.1.1-all.jar
+    jar xf checkstyle-7.1.1-all.jar google_checks.xml sun_checks.xml
+    mkdir -p /lib/checkstyle
+    mv checkstyle-7.1.1-all.jar /lib/checkstyle/checkstyle-7.1.1-all.jar
+    mkdir -p /etc/checkstyle
+    mv *_checks.xml /etc/checkstyle
     echo Done.
 }
 
@@ -98,19 +101,28 @@ setup_python_dev() {
 
 setup_ruby_dev() {
     echo Setting up for Ruby development
+    yum install -y ruby
     su -c "gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3" -l "${user}"
     su -c "curl -sSL https://get.rvm.io | bash -s stable" -l "${user}"
-    su -c "${HOME}/.rvm/bin/rvm install ruby" -l "${user}"
-    su -c "${HOME}/.rvm/bin/rvm install jruby" -l "${user}"
-    su -c "${HOME}/.rvm/bin/rvm alias create default ruby" -l "${user}"
+    su -c "~/.rvm/bin/rvm install ruby" -l "${user}"
+    su -c "~/.rvm/bin/rvm install jruby" -l "${user}"
+    su -c "~/.rvm/bin/rvm alias create default ruby" -l "${user}"
     echo Done.
 }
 
 setup_javascript_dev() {
-    echo Setting for Javascript development
+    echo Setting up for Javascript development
     curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
     yum -y install nodejs
-    npm i -g eslint jsonlint
+    npm i -g jshint
+    echo Done.
+}
+
+setup_web_dev() {
+    echo Setting up for web development
+    wget http://binaries.html-tidy.org/binaries/tidy-5.2.0/tidy-5.2.0-64bit.rpm
+    yum install -y tidy-5.2.0-64bit.rpm
+    gem install sass
     echo Done.
 }
 

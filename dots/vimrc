@@ -103,5 +103,6 @@ map <Leader>t :call system('tmux send-keys -t dev:work.1 "!!" Enter')<CR>
 autocmd BufWritePost * call system('tmux send-keys -t dev:work.1 "onsave" Enter')
 
 " Java dev
-g:syntastic_java_checkstyle_classpath='/lib/java/checkstyle.java'
-g:syntastic_java_checkstyle_conf_file='/google_checks.xml'
+let g:syntastic_java_checkers=['checkstyle', 'javac']
+let g:syntastic_java_checkstyle_classpath='/lib/checkstyle/checkstyle-7.1.1-all.jar'
+let g:syntastic_java_checkstyle_conf_file='/etc/checkstyle/google_checks.xml'
