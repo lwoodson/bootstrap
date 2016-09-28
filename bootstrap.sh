@@ -7,7 +7,7 @@ email=${2}
 homedir=/home/${1}
 hostname=$(hostname)
 ip=$(ifconfig | grep eth0 -A 1| grep inet | awk '{print $2}')
-password=$(openssl rand -base64 32)
+password=$(openssl rand -base64 32) | cut -c 1-6
 workdir=$(pwd)
 
 install_packages() {
@@ -158,7 +158,7 @@ install_dev_utilities() {
     unzip master.zip
     cd devtodo2-master
     GOPATH=/usr/local/lib/go go get gopkg.in/alecthomas/kingpin.v2
-    GOPATH=/usr/local/lib/go go get make install
+    GOPATH=/usr/local/lib/go make install
     cd "${workdir}"
     echo Done.
 }
