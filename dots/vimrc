@@ -104,5 +104,5 @@ autocmd BufWritePost * call system('tmux send-keys -t dev:work.1 "onsave" Enter'
 
 " Java dev
 let g:syntastic_java_checkers=['checkstyle', 'javac']
-let g:syntastic_java_checkstyle_classpath='/lib/checkstyle/checkstyle-7.1.1-all.jar'
-let g:syntastic_java_checkstyle_conf_file='/etc/checkstyle/google_checks.xml'
+let g:syntastic_java_checkstyle_classpath='/usr/local/lib/checkstyle/checkstyle-7.1.1-all.jar'
+let g:syntastic_java_checkstyle_conf_file='/usr/local/etc/checkstyle/google_checks.xml'

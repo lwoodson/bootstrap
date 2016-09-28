@@ -7,7 +7,7 @@ email=${2}
 homedir=/home/${1}
 hostname=$(hostname)
 ip=$(ifconfig | grep eth0 -A 1| grep inet | awk '{print $2}')
-password=$(openssl rand -base64 32) | cut -c 1-6
+password=$(openssl rand -base64 32 | cut -c 1-6)
 workdir=$(pwd)
 
 install_packages() {
@@ -17,7 +17,8 @@ install_packages() {
     yum groupinstall -y "Development Tools"
     yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop traceroute \
                    tmux vim ctags git docker libyaml-devel readline-devel zlib-devel \
-                   libffi-devel openssl-devel sqlite-devel ack jq sysstat unzip
+                   libffi-devel openssl-devel sqlite-devel ack jq sysstat unzip \
+                   bash-completion
     echo Done.
 }
 
@@ -86,10 +87,10 @@ setup_java_dev() {
     cd /usr/local/src
     wget http://downloads.sourceforge.net/project/checkstyle/checkstyle/7.1.1/checkstyle-7.1.1-all.jar
     jar xf checkstyle-7.1.1-all.jar google_checks.xml sun_checks.xml
-    mkdir -p /lib/checkstyle
-    mv checkstyle-7.1.1-all.jar /lib/checkstyle/checkstyle-7.1.1-all.jar
-    mkdir -p /etc/checkstyle
-    mv *_checks.xml /etc/checkstyle
+    mkdir -p /usr/local/lib/checkstyle
+    mv checkstyle-7.1.1-all.jar /usr/local/lib/checkstyle/checkstyle-7.1.1-all.jar
+    mkdir -p /usr/local/etc/checkstyle
+    mv *_checks.xml /usr/local/etc/checkstyle
     cd "${workdir}"
     echo Done.
 }
@@ -144,6 +145,19 @@ setup_web_dev() {
     yum install -y tidy-5.2.0-64bit.rpm
     gem install sass
     rm tidy-5.2.0-64bit.rpm
+    cd "${workdir}"
+    echo Done.
+}
+
+setup_cloud_tools() {
+    echo Installing Cloud Tools...
+    pip install awscli --ignore-installed six
+
+    cd /usr/local/src
+    wget https://github.com/digitalocean/doctl/releases/download/v1.4.0/doctl-1.4.0-linux-amd64.tar.gz
+    tar -xzf doctl-1.4.0-linux-amd64.tar.gz
+    mv doctl /usr/local/bin/doctl
+    rm doctl-1.4.0-linux-amd64.tar.gz
     cd "${workdir}"
     echo Done.
 }
