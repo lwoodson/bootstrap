@@ -16,7 +16,7 @@ install_packages() {
     yum groupinstall -y "Development Tools"
     yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop traceroute \
                    tmux vim ctags git docker libyaml-devel readline-devel zlib-devel \
-                   libffi-devel openssl-devel sqlite-devel ack jq sysstat
+                   libffi-devel openssl-devel sqlite-devel ack jq sysstat unzip
     echo Done.
 }
 
@@ -82,12 +82,14 @@ setup_java_dev() {
     echo Setting up for Java development
     yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel java-1.8.0-openjdk \
                    java-1.8.0-openjdk-devel maven
+    cd /usr/local/src
     wget http://downloads.sourceforge.net/project/checkstyle/checkstyle/7.1.1/checkstyle-7.1.1-all.jar
     jar xf checkstyle-7.1.1-all.jar google_checks.xml sun_checks.xml
     mkdir -p /lib/checkstyle
     mv checkstyle-7.1.1-all.jar /lib/checkstyle/checkstyle-7.1.1-all.jar
     mkdir -p /etc/checkstyle
     mv *_checks.xml /etc/checkstyle
+    cd
     echo Done.
 }
 
@@ -118,11 +120,30 @@ setup_javascript_dev() {
     echo Done.
 }
 
+setup_go_dev() {
+    echo Setting up for Go development
+    cd /usr/local/src
+    wget https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz
+    tar -C /usr/local/go1.7.1 -xzf go1.7.1.linux-amd64.tar.gz
+    ln -s /usr/local/go1.7.1 /usr/local/go
+    ln -s /usr/local/go/bin/go /usr/local/bin/go
+    ln -s /usr/local/go/bin/godoc /usr/local/bin/godoc
+    ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+    mkdir -p /usr/local/lib/go
+    echo "export GOPATH=/usr/local/lib/go" > /etc/profile.d/go.sh
+    rm /usr/local/src/go1.7.1
+    cd
+    echo Done.
+}
+
 setup_web_dev() {
     echo Setting up for web development
+    cd /user/local/src
     wget http://binaries.html-tidy.org/binaries/tidy-5.2.0/tidy-5.2.0-64bit.rpm
     yum install -y tidy-5.2.0-64bit.rpm
     gem install sass
+    rm tidy-5.2.0-64bit.rpm
+    cd
     echo Done.
 }
 
@@ -131,6 +152,12 @@ install_dev_utilities() {
     cp -R bin "${homedir}/bin"
     chown -R "${user}":"${user}" "${homedir}/bin"
     chmod +x "${homedir}"/bin/*
+
+    wget https://github.com/alecthomas/devtodo2/archive/master.zip
+    unzip master.zip
+    cd devtodo-master
+    GOPATH=/usr/local/lib/go go get gopkg.in/alecthomas/kingpin.v2
+    GOPATH=/usr/local/lib/go go get make install
     echo Done.
 }
 
@@ -167,5 +194,7 @@ setup_java_dev
 setup_python_dev
 setup_ruby_dev
 setup_javascript_dev
+setup_go_dev
+setup_web_dev
 install_dev_utilities
 send_details_email
