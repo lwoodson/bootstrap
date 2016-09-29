@@ -207,6 +207,7 @@ EOF
     yum -y install docker-engine
     systemctl start docker
     systemctl enable docker
+    sudo usermod -aG docker "${user}"
     echo Done.
 }
 
