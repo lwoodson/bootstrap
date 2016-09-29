@@ -18,15 +18,45 @@ install_packages() {
     yum install -y telnet nmap-ncat nmap bind-utils lsof tcpdump iotop \
                    traceroute tmux vim ctags git libyaml-devel readline-devel \
                    zlib-devel libffi-devel openssl-devel sqlite-devel ack jq \
-                   sysstat unzip bash-completion yum-cron
+                   sysstat unzip bash-completion yum-cron ntp
     echo Done.
 }
 
 setup_host() {
-    echo Setting up host...
-    sed -i 's/^%wheel.*/%wheel  ALL=(ALL)   NOPASSWD: ALL/' /etc/sudoers
+    echo Allowing sudoers to without password...
+    sed -i 's/^%wheel.*/%wheel  ALL=(ALL)  NOPASSWD: ALL/' /etc/sudoers
+    echo Done.
+
+    echo Setting up automatic updates with yum-cron
     sed -i 's/^.*apply_updates.*=.*no$//' /etc/yum/yum-cron.conf
     echo "apply_updates = yes" > /etc/yum/yum-cron.conf
+    echo Done.
+
+    echo Setting up ntp...
+    # TODO this should be a parameter
+    timedatectl set-timezone America/Chicago
+    systemctl start ntpd
+    systemctl enable ntpd
+    echo Done.
+
+    echo Setting up firewalld...
+    systemctl start firewalld
+    firewall-cmd --permanent --add-service=ssh
+    firewall-cmd --permanent --add-service=http
+    firewall-cmd --permanent --add-service=https
+    firewall-cmd --permanent --list-all
+    firewall-cmd --reload
+    systemctl enable firewalld
+    echo Done.
+
+    echo Locking down sshd...
+    echo "" >> /etc/ssh/sshd_config
+    echo "# customizations..." >> /etc/ssh/sshd_config
+    sed -i 's/^.*PermitRootLogin\(.*\)/#PermitRootLogin\1/' /etc/ssh/sshd_config
+    echo PermitRootLogin no >> /etc/ssh/sshd_config
+    sed -i 's/^.*PasswordAuthentication\(.*\)/#PasswordAuthentication\1/' /etc/ssh/sshd_config
+    echo PasswordAuthentication no >> /etc/ssh/sshd_config
+    systemctl reload sshd
     echo Done.
 }
 
@@ -39,7 +69,6 @@ setup_user() {
     fi
     usermod -aG wheel "${user}"
     mkdir -p "${homedir}/src"
-    cp lockdown.sh "${homedir}"/lockdown.sh
     echo Done.
 }
 
@@ -177,6 +206,7 @@ gpgkey=https://yum.dockerproject.org/gpg
 EOF
     yum -y install docker-engine
     systemctl start docker
+    systemctl enable docker
     echo Done.
 }
 
