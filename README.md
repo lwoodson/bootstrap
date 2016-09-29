@@ -1,6 +1,6 @@
 # Bootstrap
-Bootstrapping for local development on a CentOS box.  It should be
-run as root like so:
+Bootstrapping for development on a CentOS box in the cloud.  It should
+be run as root like so:
 
 ```
 ./bootstrap tsmith tony.smith@foo.com
@@ -9,7 +9,8 @@ run as root like so:
 This will:
 
 * Carry out some basic bootstrapping such as removing the requirement
-  of sudoers to have to provide a password
+  of sudoers to have to provide a password, firewalling, ssh lockdown,
+  ntp setup, etc...
 * Create the user tsmith
 * Make tsmith a sudoer
 * Generate a key pair for tsmith with appropriate permissions in their
@@ -29,12 +30,15 @@ The primary purpose of this is to give me the ability to bootstrap
 cloud hosts w/development tools that I like to use for development in
 lieu of a high-performance/costly laptop.
 
-## Deploying
+## Bootstrapping
 1. Find a release you want [here](https://github.com/lwoodson/bootstrap/releases)
 1. `wget` the source tarball
 2. `tar -xzf` the source tarball
 3. `cd` into the unpacked directory
 4. `./bootstrap.sh [USER] [EMAIL]` to start bootstrapping
 
-When done, you should be able to log in as the user specified w/their
-keys on GitHub.
+When done, you should be able to log in as the user specified.
+
+## Sources
+* [DigitalOcean's initial server setup with centos 7](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-centos-7)
+* [DigitalOcean's additional recommended steps for new centos 7 servers](https://www.digitalocean.com/community/tutorials/additional-recommended-steps-for-new-centos-7-servers)
