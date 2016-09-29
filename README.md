@@ -22,6 +22,7 @@ This will:
 * Setup other dot files
 * Customize Vim as an IDE
 * Install dev utilities for TDD workflow
+* Fetch tsmith's keys from GitHub into authorized_keys
 * Send an email to tony.smith@foo.com with a password and other details
 
 The primary purpose of this is to give me the ability to bootstrap
@@ -33,4 +34,7 @@ lieu of a high-performance/costly laptop.
 1. `wget` the source tarball
 2. `tar -xzf` the source tarball
 3. `cd` into the unpacked directory
-4. `./bootstrap.sh` to start bootstrapping
+4. `./bootstrap.sh [USER] [EMAIL]` to start bootstrapping
+
+When done, you should be able to log in as the user specified w/their
+keys on GitHub.
