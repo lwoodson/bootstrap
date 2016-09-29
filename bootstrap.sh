@@ -44,6 +44,7 @@ setup_host() {
     firewall-cmd --permanent --add-service=ssh
     firewall-cmd --permanent --add-service=http
     firewall-cmd --permanent --add-service=https
+    firewall-cmd --permanent --add-port=5000-5100/tcp
     firewall-cmd --permanent --list-all
     firewall-cmd --reload
     systemctl enable firewalld
