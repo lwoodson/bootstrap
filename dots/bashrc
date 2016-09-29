@@ -1,4 +1,4 @@
-alias ls="ls -G"
+alias ls="ls -G --color=always"
 alias beep="echo -en '\007'"
 alias tmux="TERM=xterm-256color tmux"
 alias devkill="tmux kill-session -t dev"
